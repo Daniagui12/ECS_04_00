@@ -28,7 +28,8 @@ from src.ecs.components.tags.c_tag_bullet import CTagBullet
 
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 
-from src.create.prefab_creator import create_enemy_spawner, create_input_player, create_player_square, create_bullet, create_new_player_square
+from src.create.prefab_creator import create_enemy_spawner, create_input_player, create_player_square, create_bullet
+from src.ecs.systems.s_weapon_change import system_weapon_change
 
 
 class GameEngine:
@@ -153,8 +154,4 @@ class GameEngine:
                           self.player_c_s.area.size, self.bullet_cfg)
             
         if c_input.name == "PLAYER_CHANGE_WEAPON":
-            self.player_entity = create_new_player_square(self.ecs_world, self.player_entity, self.player_cfg)
-            self.player_c_v = self.ecs_world.component_for_entity(self.player_entity, CVelocity)
-            self.player_c_t = self.ecs_world.component_for_entity(self.player_entity, CTransform)
-            self.player_c_s = self.ecs_world.component_for_entity(self.player_entity, CSurface)
-            create_input_player(self.ecs_world)
+            system_weapon_change(self.ecs_world, self.player_entity)

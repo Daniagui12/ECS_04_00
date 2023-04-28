@@ -4,6 +4,7 @@ import esper
 
 from src.ecs.components.c_enemy_spawner import CEnemySpawner
 from src.ecs.components.c_input_command import CInputCommand
+from src.ecs.components.c_player_weapon import CPlayerWeapon
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
@@ -75,22 +76,9 @@ def create_player_square(world: esper.World, player_info: dict, player_lvl_info:
     world.add_component(player_entity,
                         CAnimation(player_info["animations"]))
     world.add_component(player_entity, CPlayerState())
+    world.add_component(player_entity, CPlayerWeapon("basic", player_info))
     return player_entity
 
-def create_new_player_square(world: esper.World, player_entity: int, player_info: dict) -> int:
-    player_sprite = ServiceLocator.images_service.get("assets/img/player_2.png")
-    player_curr_pos = world.component_for_entity(player_entity, CTransform).pos
-    size = player_sprite.get_size()
-    size = (size[0] / player_info["animations"]["number_frames"], size[1])
-    pos = pygame.Vector2(player_curr_pos.x, player_curr_pos.y)
-    vel = pygame.Vector2(0, 0)
-    world.delete_entity(player_entity)
-    player_entity_2 = create_sprite(world, pos, vel, player_sprite)
-    world.add_component(player_entity_2, CTagPlayer())
-    world.add_component(player_entity_2,
-                        CAnimation(player_info["animations"]))
-    world.add_component(player_entity_2, CPlayerState())
-    return player_entity_2
 
 def create_enemy_spawner(world: esper.World, level_data: dict):
     spawner_entity = world.create_entity()

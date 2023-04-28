@@ -1,5 +1,6 @@
 {
     "image": "assets/img/player.png",
+    "alternate_image":"assets/img/player_2.png",
     "animations": {
         "number_frames": 4,
         "list": [
