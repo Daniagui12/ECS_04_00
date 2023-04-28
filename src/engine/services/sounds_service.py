@@ -1,8 +1,13 @@
+import pygame
+
+
 class SoundsService:
     def __init__(self) -> None:
-        pass
+        self.sounds = {}
 
     def play(self, path: str) -> None:
-        pass
+        if path not in self.sounds:
+            self.sounds[path] = pygame.mixer.Sound(path)
+        self.sounds[path].play()
 
     

@@ -2,22 +2,26 @@
     "TypeA": {
         "image": "assets/img/asteroid_01.png",
         "velocity_min": 25,
-        "velocity_max": 50
+        "velocity_max": 50,
+        "sound": "assets/snd/asteroid.ogg"
     },
     "TypeB": {
         "image": "assets/img/asteroid_02.png",
         "velocity_min": 50,
-        "velocity_max": 75
+        "velocity_max": 75,
+        "sound": "assets/snd/asteroid.ogg"
     },
     "TypeC": {
         "image": "assets/img/asteroid_03.png",
         "velocity_min": 75,
-        "velocity_max": 100
+        "velocity_max": 100,
+        "sound": "assets/snd/asteroid.ogg"
     },
     "TypeD": {
         "image": "assets/img/asteroid_04.png",
         "velocity_min": 100,
-        "velocity_max": 125
+        "velocity_max": 125,
+        "sound": "assets/snd/asteroid.ogg"
     },
     "TypeHunter": {
         "image": "assets/img/enemy.png",
@@ -41,6 +45,7 @@
         "velocity_chase": 75,
         "velocity_return": 100,
         "distance_start_chase": 100,
-        "distance_start_return": 200
+        "distance_start_return": 200,
+        "sound_chase": "assets/snd/ufo.ogg"
     }
 }
