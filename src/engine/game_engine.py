@@ -28,7 +28,7 @@ from src.ecs.components.tags.c_tag_bullet import CTagBullet
 
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 
-from src.create.prefab_creator import create_enemy_spawner, create_input_player, create_player_square, create_bullet
+from src.create.prefab_creator import create_enemy_spawner, create_input_player, create_player_square, create_bullet, create_new_player_square
 
 
 class GameEngine:
@@ -78,10 +78,10 @@ class GameEngine:
 
     def _create(self):
         system_instruction_show(self.screen)
-        self._player_entity = create_player_square(self.ecs_world, self.player_cfg, self.level_01_cfg["player_spawn"])
-        self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
-        self._player_c_t = self.ecs_world.component_for_entity(self._player_entity, CTransform)
-        self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
+        self.player_entity = create_player_square(self.ecs_world, self.player_cfg, self.level_01_cfg["player_spawn"])
+        self.player_c_v = self.ecs_world.component_for_entity(self.player_entity, CVelocity)
+        self.player_c_t = self.ecs_world.component_for_entity(self.player_entity, CTransform)
+        self.player_c_s = self.ecs_world.component_for_entity(self.player_entity, CSurface)
         create_enemy_spawner(self.ecs_world, self.level_01_cfg)
         create_input_player(self.ecs_world)
 
@@ -104,13 +104,13 @@ class GameEngine:
         system_screen_bullet(self.ecs_world, self.screen)
 
         system_collision_enemy_bullet(self.ecs_world, self.explosion_cfg)
-        system_collision_player_enemy(self.ecs_world, self._player_entity,
+        system_collision_player_enemy(self.ecs_world, self.player_entity,
                                       self.level_01_cfg, self.explosion_cfg)
 
         system_explosion_kill(self.ecs_world)
 
         system_player_state(self.ecs_world)
-        system_enemy_hunter_state(self.ecs_world, self._player_entity, self.enemies_cfg["TypeHunter"])
+        system_enemy_hunter_state(self.ecs_world, self.player_entity, self.enemies_cfg["TypeHunter"])
 
         system_animation(self.ecs_world, self.delta_time)
 
@@ -129,25 +129,32 @@ class GameEngine:
     def _do_action(self, c_input: CInputCommand):
         if c_input.name == "PLAYER_LEFT":
             if c_input.phase == CommandPhase.START:
-                self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
+                self.player_c_v.vel.x -= self.player_cfg["input_velocity"]
             elif c_input.phase == CommandPhase.END:
-                self._player_c_v.vel.x += self.player_cfg["input_velocity"]
+                self.player_c_v.vel.x += self.player_cfg["input_velocity"]
         if c_input.name == "PLAYER_RIGHT":
             if c_input.phase == CommandPhase.START:
-                self._player_c_v.vel.x += self.player_cfg["input_velocity"]
+                self.player_c_v.vel.x += self.player_cfg["input_velocity"]
             elif c_input.phase == CommandPhase.END:
-                self._player_c_v.vel.x -= self.player_cfg["input_velocity"]
+                self.player_c_v.vel.x -= self.player_cfg["input_velocity"]
         if c_input.name == "PLAYER_UP":
             if c_input.phase == CommandPhase.START:
-                self._player_c_v.vel.y -= self.player_cfg["input_velocity"]
+                self.player_c_v.vel.y -= self.player_cfg["input_velocity"]
             elif c_input.phase == CommandPhase.END:
-                self._player_c_v.vel.y += self.player_cfg["input_velocity"]
+                self.player_c_v.vel.y += self.player_cfg["input_velocity"]
         if c_input.name == "PLAYER_DOWN":
             if c_input.phase == CommandPhase.START:
-                self._player_c_v.vel.y += self.player_cfg["input_velocity"]
+                self.player_c_v.vel.y += self.player_cfg["input_velocity"]
             elif c_input.phase == CommandPhase.END:
-                self._player_c_v.vel.y -= self.player_cfg["input_velocity"]
+                self.player_c_v.vel.y -= self.player_cfg["input_velocity"]
 
         if c_input.name == "PLAYER_FIRE" and self.num_bullets < self.level_01_cfg["player_spawn"]["max_bullets"]:
-            create_bullet(self.ecs_world, c_input.mouse_pos, self._player_c_t.pos,
-                          self._player_c_s.area.size, self.bullet_cfg)
+            create_bullet(self.ecs_world, c_input.mouse_pos, self.player_c_t.pos,
+                          self.player_c_s.area.size, self.bullet_cfg)
+            
+        if c_input.name == "PLAYER_CHANGE_WEAPON":
+            self.player_entity = create_new_player_square(self.ecs_world, self.player_entity, self.player_cfg)
+            self.player_c_v = self.ecs_world.component_for_entity(self.player_entity, CVelocity)
+            self.player_c_t = self.ecs_world.component_for_entity(self.player_entity, CTransform)
+            self.player_c_s = self.ecs_world.component_for_entity(self.player_entity, CSurface)
+            create_input_player(self.ecs_world)
