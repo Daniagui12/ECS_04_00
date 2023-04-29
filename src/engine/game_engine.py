@@ -3,6 +3,7 @@ import time
 import pygame
 import esper
 import asyncio
+from src.ecs.components.c_player_weapon import CPlayerWeapon
 from src.ecs.systems.s_animation import system_animation
 
 from src.ecs.systems.s_collision_player_enemy import system_collision_player_enemy
@@ -28,7 +29,7 @@ from src.ecs.components.tags.c_tag_bullet import CTagBullet
 
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 
-from src.create.prefab_creator import create_enemy_spawner, create_input_player, create_player_square, create_bullet
+from src.create.prefab_creator import create_enemy_spawner, create_input_player, create_multiple_bullets, create_player_square, create_bullet
 from src.ecs.systems.s_weapon_change import system_weapon_change
 
 
@@ -67,6 +68,7 @@ class GameEngine:
             self.explosion_cfg = json.load(explosion_file)
 
     async def run(self) -> None:
+        system_instruction_show(self.screen)
         self._create()
         self.is_running = True
         while self.is_running:
@@ -78,7 +80,7 @@ class GameEngine:
         self._clean()
 
     def _create(self):
-        system_instruction_show(self.screen)
+        # system_instruction_show(self.screen)
         self.player_entity = create_player_square(self.ecs_world, self.player_cfg, self.level_01_cfg["player_spawn"])
         self.player_c_v = self.ecs_world.component_for_entity(self.player_entity, CVelocity)
         self.player_c_t = self.ecs_world.component_for_entity(self.player_entity, CTransform)
@@ -120,7 +122,7 @@ class GameEngine:
 
     def _draw(self):
         self.screen.fill(self.bg_color)
-        system_rendering(self.ecs_world, self.screen)
+        system_rendering(self.ecs_world, self.screen, self.delta_time)
         pygame.display.flip()
 
     def _clean(self):
@@ -150,8 +152,15 @@ class GameEngine:
                 self.player_c_v.vel.y -= self.player_cfg["input_velocity"]
 
         if c_input.name == "PLAYER_FIRE" and self.num_bullets < self.level_01_cfg["player_spawn"]["max_bullets"]:
-            create_bullet(self.ecs_world, c_input.mouse_pos, self.player_c_t.pos,
-                          self.player_c_s.area.size, self.bullet_cfg)
+            c_player_w = self.ecs_world.component_for_entity(self.player_entity, CPlayerWeapon)
+            if c_player_w.weapon == "basic":
+                print("basic")
+                create_bullet(self.ecs_world, c_input.mouse_pos, self.player_c_t.pos,
+                            self.player_c_s.area.size, self.bullet_cfg)
+            else:
+                print("multiple")
+                create_multiple_bullets(self.ecs_world, c_input.mouse_pos, self.player_c_t.pos,
+                            self.player_c_s.area.size, self.bullet_cfg)
             
         if c_input.name == "PLAYER_CHANGE_WEAPON":
             system_weapon_change(self.ecs_world, self.player_entity)

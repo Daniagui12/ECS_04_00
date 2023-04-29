@@ -1,3 +1,4 @@
+import math
 import random
 import pygame
 import esper
@@ -124,6 +125,39 @@ def create_bullet(world: esper.World,
 
     bullet_entity = create_sprite(world, pos, vel, bullet_surface)
     world.add_component(bullet_entity, CTagBullet())
+    ServiceLocator.sounds_service.play(bullet_info["sound"])
+
+def create_multiple_bullets(world: esper.World,
+                        mouse_pos: pygame.Vector2,
+                        player_pos: pygame.Vector2,
+                        player_size: pygame.Vector2,
+                        bullet_info: dict):
+    bullet_surface = ServiceLocator.images_service.get(bullet_info["image"])
+    bullet_size = bullet_surface.get_rect().size
+    
+    # Calculate the position of the center bullet
+    center_pos = pygame.Vector2(player_pos.x + (player_size[0] / 2) - (bullet_size[0] / 2),
+                                player_pos.y + (player_size[1] / 2) - (bullet_size[1] / 2))
+    vel = (mouse_pos - player_pos)
+    vel = vel.normalize() * bullet_info["velocity"]
+    
+    # Calculate the positions of the left and right bullets
+    left_pos = pygame.Vector2(center_pos.x - (bullet_size[0] / 2), center_pos.y)
+    right_pos = pygame.Vector2(center_pos.x + (bullet_size[0] / 2), center_pos.y)
+    
+    # Calculate the velocities of the left and right bullets
+    left_vel = vel.rotate(30)
+    right_vel = vel.rotate(-30)
+    
+    # Create the entities for the bullets
+    center_bullet = create_sprite(world, center_pos, vel, bullet_surface)
+    left_bullet = create_sprite(world, left_pos, left_vel, bullet_surface)
+    right_bullet = create_sprite(world, right_pos, right_vel, bullet_surface)
+    
+    # Add tags and play sounds
+    world.add_component(center_bullet, CTagBullet())
+    world.add_component(left_bullet, CTagBullet())
+    world.add_component(right_bullet, CTagBullet())
     ServiceLocator.sounds_service.play(bullet_info["sound"])
 
 

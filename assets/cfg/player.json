@@ -18,5 +18,6 @@
             }
         ]
     },
-    "input_velocity": 100
+    "input_velocity": 100,
+    "triple_shot_cooldown": 10
 }
