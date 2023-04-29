@@ -13,6 +13,5 @@ def system_finish_game(world: esper.World, screen: pygame.Surface) -> None:
         text_rect.center = screen.get_rect().center
         screen.blit(text, text_rect)
         pygame.display.flip()
-        pygame.time.wait(3000)
-        return False
-    return True
+        pygame.time.wait(2000)
+        exit()
