@@ -8,6 +8,7 @@ class CEnemySpawner:
         for single_event in spawn_events_data:
             self.spawn_event_data.append(SpawnEventData(single_event))
         self.enemies_to_spawn:int = len(self.spawn_event_data)
+        self.enemies_to_kill:int = len(self.spawn_event_data)
 
 class SpawnEventData:
     def __init__(self, event_data:dict) -> None:

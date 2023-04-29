@@ -124,7 +124,7 @@ class GameEngine:
         system_enemy_hunter_state(self.ecs_world, self.player_entity, self.enemies_cfg["TypeHunter"])
 
         system_animation(self.ecs_world, self.delta_time)
-        system_finish_game(self.ecs_world, self.screen)
+        self.is_running = system_finish_game(self.ecs_world, self.screen)
         self.ecs_world._clear_dead_entities()
         self.num_bullets = len(self.ecs_world.get_component(CTagBullet))
 
