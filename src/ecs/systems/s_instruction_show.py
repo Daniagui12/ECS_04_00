@@ -1,6 +1,7 @@
 import pygame
+import asyncio
 
-def system_instruction_show(screen: pygame.Surface):
+async def system_instruction_show(screen: pygame.Surface):
     # Set up the font
     font = pygame.font.Font(None, 36)
 
@@ -14,4 +15,7 @@ def system_instruction_show(screen: pygame.Surface):
     screen.blit(text, textpos)
     pygame.display.update()
 
-    pygame.time.delay(4000)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                return True

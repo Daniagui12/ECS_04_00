@@ -68,7 +68,9 @@ class GameEngine:
             self.explosion_cfg = json.load(explosion_file)
 
     async def run(self) -> None:
-        system_instruction_show(self.screen)
+        # system_instruction_show(self.screen)
+        task = asyncio.create_task(system_instruction_show(self.screen))
+        await task
         self._create()
         self.is_running = True
         while self.is_running:
