@@ -53,6 +53,7 @@ class GameEngine:
                                      self.window_cfg["bg_color"]["b"])
         self.ecs_world = esper.World()
         self.num_bullets = 0
+        self.paused = False
 
     def _load_config_files(self):
         with open("assets/cfg/window.json", encoding="utf-8") as window_file:
@@ -75,10 +76,11 @@ class GameEngine:
         self._create()
         self.is_running = True
         while self.is_running:
-            self._calculate_time()
             self._process_events()
-            self._update()
-            self._draw()
+            if not self.paused:
+                self._calculate_time()
+                self._update()
+                self._draw()
             await asyncio.sleep(0)
         self._clean()
 
@@ -100,6 +102,9 @@ class GameEngine:
             system_input_player(self.ecs_world, event, self._do_action)
             if event.type == pygame.QUIT:
                 self.is_running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    self.paused = not self.paused
 
     def _update(self):
         system_enemy_spawner(self.ecs_world, self.enemies_cfg, self.delta_time)
@@ -120,7 +125,6 @@ class GameEngine:
 
         system_animation(self.ecs_world, self.delta_time)
         system_finish_game(self.ecs_world, self.screen)
-
         self.ecs_world._clear_dead_entities()
         self.num_bullets = len(self.ecs_world.get_component(CTagBullet))
 
