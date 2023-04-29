@@ -19,5 +19,6 @@
         ]
     },
     "input_velocity": 100,
-    "triple_shot_cooldown": 10
+    "triple_shot_cooldown": 10,
+    "max_number_of_bullets": 3
 }

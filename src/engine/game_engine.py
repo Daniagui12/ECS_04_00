@@ -154,13 +154,15 @@ class GameEngine:
         if c_input.name == "PLAYER_FIRE" and self.num_bullets < self.level_01_cfg["player_spawn"]["max_bullets"]:
             c_player_w = self.ecs_world.component_for_entity(self.player_entity, CPlayerWeapon)
             if c_player_w.weapon == "basic":
-                print("basic")
                 create_bullet(self.ecs_world, c_input.mouse_pos, self.player_c_t.pos,
                             self.player_c_s.area.size, self.bullet_cfg)
             else:
-                print("multiple")
                 create_multiple_bullets(self.ecs_world, c_input.mouse_pos, self.player_c_t.pos,
                             self.player_c_s.area.size, self.bullet_cfg)
+                c_player_w.number_of_bullets += 1
+                if c_player_w.number_of_bullets >= c_player_w.max_number_of_bullets:
+                    system_weapon_change(self.ecs_world, self.player_entity)
+
             
         if c_input.name == "PLAYER_CHANGE_WEAPON":
             system_weapon_change(self.ecs_world, self.player_entity)
