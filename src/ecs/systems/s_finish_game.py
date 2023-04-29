@@ -17,4 +17,3 @@ def system_finish_game(world: esper.World, screen: pygame.Surface) -> None:
         pygame.time.wait(3000)
         world.clear_database()
         pygame.quit()
-        exit()
